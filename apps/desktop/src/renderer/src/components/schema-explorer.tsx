@@ -1923,4 +1923,4 @@ export function SchemaExplorer() {
       <PgImportDialog />
     </SidebarGroup>
   )
-                                                    }
+}
