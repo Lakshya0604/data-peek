@@ -1920,4 +1920,6 @@ export function SchemaExplorer() {
       <PgExportDialog />
       <PgImportDialog />
     </SidebarGroup>
-  )}
+  )
+  
+}
