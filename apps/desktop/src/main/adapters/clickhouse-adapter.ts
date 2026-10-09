@@ -476,9 +476,9 @@ export class ClickHouseAdapter implements DatabaseAdapter {
           max_length: string | null
           avg_length: number | null
         }>(client, {
-          query: `SELECT min(lengthUTF8({col:Identifier})) AS min_length,
-                         max(lengthUTF8({col:Identifier})) AS max_length,
-                         avg(lengthUTF8({col:Identifier})) AS avg_length
+          query: `SELECT min(lengthUTF8(toString({col:Identifier}))) AS min_length,
+                         max(lengthUTF8(toString({col:Identifier}))) AS max_length,
+                         avg(lengthUTF8(toString({col:Identifier}))) AS avg_length
                   ${source}
                   WHERE {col:Identifier} IS NOT NULL`,
           query_params
