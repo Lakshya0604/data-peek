@@ -112,6 +112,9 @@ const toConnectionWithStatus = (config: ConnectionConfig): ConnectionWithStatus 
   isConnecting: false
 })
 
+// Bumped on every schema fetch so a slow sequences response from an older fetch is ignored.
+let sequenceRequestId = 0
+
 export const useConnectionStore = create<ConnectionState>((set, get) => ({
   // Initial state
   connections: [],
@@ -229,6 +232,8 @@ export const useConnectionStore = create<ConnectionState>((set, get) => ({
     const connection = get().connections.find((c) => c.id === id)
     if (!connection) return
 
+    const requestId = ++sequenceRequestId
+
     set({
       isLoadingSchema: true,
       schemas: [],
@@ -261,7 +266,7 @@ export const useConnectionStore = create<ConnectionState>((set, get) => ({
         window.api.ddl
           .getSequences(connection)
           .then((result) => {
-            if (get().activeConnectionId !== id) return
+            if (get().activeConnectionId !== id || requestId !== sequenceRequestId) return
             set({ sequences: result.success && result.data ? result.data : [] })
           })
           .catch((error) => {
