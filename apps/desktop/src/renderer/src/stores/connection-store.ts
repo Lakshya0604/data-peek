@@ -7,6 +7,7 @@ import {
   ColumnInfo,
   DatabaseType,
   CustomTypeInfo,
+  SequenceInfo,
   MSSQLConnectionOptions,
   SSHConfig,
   SQLiteConnectionOptions,
@@ -66,6 +67,7 @@ interface ConnectionState {
   // Schema for active connection
   schemas: Schema[]
   customTypes: CustomTypeInfo[]
+  sequences: SequenceInfo[]
   isLoadingSchema: boolean
   schemaError: string | null
   schemaFromCache: boolean
@@ -117,6 +119,7 @@ export const useConnectionStore = create<ConnectionState>((set, get) => ({
   isInitialized: false,
   schemas: [],
   customTypes: [],
+  sequences: [],
   isLoadingSchema: false,
   schemaError: null,
   schemaFromCache: false,
@@ -230,6 +233,7 @@ export const useConnectionStore = create<ConnectionState>((set, get) => ({
       isLoadingSchema: true,
       schemas: [],
       customTypes: [],
+      sequences: [],
       schemaError: null,
       schemaFromCache: false,
       schemaFetchedAt: null
@@ -252,6 +256,18 @@ export const useConnectionStore = create<ConnectionState>((set, get) => ({
           schemaFetchedAt: fetchedAt
         })
 
+        // Sequences come from a separate call. Only some databases return any,
+        // and a failure here should not break the schema explorer.
+        window.api.ddl
+          .getSequences(connection)
+          .then((result) => {
+            if (get().activeConnectionId !== id) return
+            set({ sequences: result.success && result.data ? result.data : [] })
+          })
+          .catch((error) => {
+            console.error('Failed to fetch sequences:', error)
+          })
+
         // If loaded from cache, trigger background refresh
         if (fromCache && !stale) {
           // Small delay to let UI render first
@@ -271,6 +287,7 @@ export const useConnectionStore = create<ConnectionState>((set, get) => ({
         set({
           schemas: [],
           customTypes: [],
+          sequences: [],
           isLoadingSchema: false,
           schemaError: schemasResult.error || 'Failed to fetch schemas'
         })
@@ -280,6 +297,7 @@ export const useConnectionStore = create<ConnectionState>((set, get) => ({
       set({
         schemas: [],
         customTypes: [],
+        sequences: [],
         isLoadingSchema: false,
         schemaError: error instanceof Error ? error.message : 'Unknown error'
       })
