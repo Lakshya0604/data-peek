@@ -499,11 +499,13 @@ export class ClickHouseAdapter implements DatabaseAdapter {
       }
 
       if (statsType === 'text' || statsType === 'boolean' || statsType === 'other') {
-        // Exact counts per value, so each entry can report its own percentage.
+        // topK picks the candidates in bounded memory (an exact GROUP BY keeps one entry per
+        // distinct value), then only those few values are counted so percentages stay exact.
         const common = await this.rows<{ val: string; cnt: string }>(client, {
-          query: `SELECT toString({col:Identifier}) AS val, count() AS cnt
+          query: `WITH (SELECT topK(5)(toString({col:Identifier})) ${source}) AS top
+                  SELECT toString({col:Identifier}) AS val, count() AS cnt
                   ${source}
-                  WHERE {col:Identifier} IS NOT NULL
+                  WHERE {col:Identifier} IS NOT NULL AND has(top, toString({col:Identifier}))
                   GROUP BY val
                   ORDER BY cnt DESC, val ASC
                   LIMIT 5`,
