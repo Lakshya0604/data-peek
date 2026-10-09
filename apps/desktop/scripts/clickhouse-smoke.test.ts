@@ -314,7 +314,13 @@ describe('gating', () => {
 
 describe('column stats', () => {
   it('profiles a low-cardinality string column', async () => {
-    const stats = await adapter.getColumnStats(config, db, 'events', 'status', 'String')
+    const stats = await adapter.getColumnStats(
+      config,
+      db,
+      'events',
+      'status',
+      "Enum8('ok' = 1, 'error' = 2)"
+    )
     expect(stats.statsType).toBe('text')
     expect(stats.totalRows).toBe(50000)
     expect(stats.nullCount).toBe(0)
