@@ -845,10 +845,12 @@ export function SchemaExplorer() {
         (schema) =>
           schema.tables.length > 0 ||
           (schema.routines?.length ?? 0) > 0 ||
-          (schema.triggers?.length ?? 0) > 0
+          (schema.triggers?.length ?? 0) > 0 ||
+          schemaSequences(schema.name).length > 0
       )
   }, [
     schemas,
+    schemaSequences,
     showTables,
     showViews,
     showMaterializedViews,
@@ -1921,4 +1923,4 @@ export function SchemaExplorer() {
       <PgImportDialog />
     </SidebarGroup>
   )
-}
+                                                    }
