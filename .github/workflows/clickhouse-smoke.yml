@@ -8,10 +8,20 @@ on:
       - 'apps/desktop/src/main/__tests__/clickhouse-*'
       - 'apps/desktop/scripts/clickhouse-smoke.test.ts'
       - 'apps/desktop/vitest.smoke.config.ts'
+      - 'apps/desktop/package.json'
+      - 'apps/desktop/src/main/query-tracker.ts'
+      - 'apps/desktop/src/main/lib/capability-guard.ts'
+      - 'apps/desktop/src/main/mcp/read-guard.ts'
+      - 'apps/desktop/src/main/db-adapter.ts'
+      - 'apps/desktop/src/renderer/src/lib/sql-helpers.ts'
       - 'packages/shared/**'
       - 'seeds/clickhouse/**'
       - '.github/workflows/clickhouse-smoke.yml'
   workflow_dispatch:
+
+# The job runs pull request code, so it only gets read access to the repo.
+permissions:
+  contents: read
 
 # A new commit on the same branch supersedes any in-flight run.
 concurrency:
@@ -28,6 +38,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
