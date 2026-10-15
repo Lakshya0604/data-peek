@@ -83,6 +83,11 @@ jobs:
       - name: Run ClickHouse SSH/TLS smoke suite
         run: pnpm --filter @data-peek/desktop smoke:clickhouse:ssh-tls
 
+      - name: Check bastion reachability on failure
+        if: failure()
+        run: |
+          docker compose -f seeds/clickhouse/compose.ssh-tls.yml exec -T ssh-bastion bash -c 'getent hosts clickhouse-tls || echo dns-failed; (exec 3<>/dev/tcp/clickhouse-tls/8123) 2>/dev/null && echo bastion-reaches-8123 || echo bastion-cannot-reach-8123'
+
       - name: Show ClickHouse logs on failure
         if: failure()
         run: docker compose -f seeds/clickhouse/compose.yml logs --no-color
