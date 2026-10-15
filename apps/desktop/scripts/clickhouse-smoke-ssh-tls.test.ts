@@ -9,8 +9,8 @@ vi.mock('../src/main/lib/logger', () => ({
 const { withClickHouseClient, closeAllClickHousePools } =
   await import('../src/main/adapters/clickhouse-pool-manager')
 
-const tlsDir = resolve(__dirname, '../../seeds/clickhouse/tls')
-const sshDir = resolve(__dirname, '../../seeds/clickhouse/ssh')
+const tlsDir = resolve(__dirname, '../../../seeds/clickhouse/tls')
+const sshDir = resolve(__dirname, '../../../seeds/clickhouse/ssh')
 const httpsPort = Number(process.env.CH_HTTPS_PORT ?? 58443)
 const sshPort = Number(process.env.CH_SSH_PORT ?? 52222)
 
