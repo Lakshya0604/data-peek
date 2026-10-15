@@ -9,7 +9,6 @@ on:
       - 'apps/desktop/scripts/clickhouse-smoke.test.ts'
       - 'apps/desktop/scripts/clickhouse-smoke-ssh-tls.test.ts'
       - 'apps/desktop/src/main/ssh-tunnel-service.ts'
-      - 'apps/desktop/src/main/clickhouse-client-config.ts'
       - 'apps/desktop/vitest.smoke.config.ts'
       - 'apps/desktop/package.json'
       - 'apps/desktop/src/main/query-tracker.ts'
@@ -73,7 +72,7 @@ jobs:
         run: docker pull clickhouse/clickhouse-server:24.8
 
       - name: Prefetch ssh bastion image
-        run: docker pull linuxserver/openssh-server:latest
+        run: docker pull linuxserver/openssh-server:version-10.3_p1-r1
 
       # The script starts the compose stack with `docker compose up -d --wait`
       # and then runs the suite against it.
