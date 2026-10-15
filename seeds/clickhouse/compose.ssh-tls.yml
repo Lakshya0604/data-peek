@@ -31,7 +31,7 @@ services:
       retries: 60
 
   ssh-bastion:
-    image: linuxserver/openssh-server:latest
+    image: linuxserver/openssh-server:version-10.3_p1-r1
     environment:
       PUID: '1000'
       PGID: '1000'
